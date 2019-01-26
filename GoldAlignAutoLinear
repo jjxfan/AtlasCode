@@ -1,0 +1,213 @@
+/* Copyright (c) 2017 FIRST. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted (subject to the limitations in the disclaimer below) provided that
+ * the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list
+ * of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this
+ * list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * Neither the name of FIRST nor the names of its contributors may be used to endorse or
+ * promote products derived from this software without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+ * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package org.firstinspires.ftc.teamcode;
+
+import com.disnodeteam.dogecv.CameraViewDisplay;
+import com.disnodeteam.dogecv.DogeCV;
+import com.disnodeteam.dogecv.detectors.roverrukus.GoldAlignDetector;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+
+/**
+ * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
+ * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
+ * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
+ * class is instantiated on the Robot Controller and executed.
+ *
+ * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
+ * It includes all the skeletal structure that all linear OpModes contain.
+ *
+ * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ */
+
+@Autonomous(name="GoldAlignAutoLinearAdjust", group="Linear Opmode")
+
+public class GoldAlignAutoLinearAdjust extends LinearOpMode {
+
+    // Declare OpMode members.
+    private GoldAlignDetector detector;
+    private DcMotor left_drive = null;
+    private DcMotor right_drive = null;
+    private DcMotor intake_drive = null;
+    private ElapsedTime runtime = new ElapsedTime();
+    private TouchSensor top = null;
+    private DcMotor linear_drive = null;
+    private DigitalChannel liftSense = null;
+    double goldPosition = 2;
+
+    @Override
+    public void runOpMode() {
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+        // Initialize the hardware variables. Note that the strings used here as parameters
+        // to 'get' must correspond to the names assigned during the robot configuration
+        // step (using the FTC Robot Controller app on the phone).
+        left_drive  = hardwareMap.get(DcMotor.class, "left_drive");
+        right_drive = hardwareMap.get(DcMotor.class, "right_drive");
+        liftSense = hardwareMap.get(DigitalChannel.class, "linearLimit");
+        liftSense.setMode(DigitalChannel.Mode.INPUT);
+        linear_drive = hardwareMap.get(DcMotor.class, "linear_drive");
+        intake_drive = hardwareMap.get(DcMotor.class, "intake_drive");
+        // Set up detector
+        detector = new GoldAlignDetector(); // Create detector
+        detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance()); // Initialize it with the app context and camera
+        detector.useDefaults(); // Set detector to use default settings
+
+        // Optional tuning
+        detector.alignSize = 30; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
+        detector.downscale = 0.4; // How much to downscale the input frames
+
+        detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
+        //detector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
+        detector.maxAreaScorer.weight = 0.005; //
+
+        detector.ratioScorer.weight = 5; //
+        detector.ratioScorer.perfectRatio = 1.0; // Ratio adjustment
+
+        // Most robots need the motor on one side to be reversed to drive forward
+        // Reverse the motor that runs backwards when connected directly to the battery
+
+
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+        detector.disable();
+
+        runtime.reset();
+        left_drive.setPower(0);
+        right_drive.setPower(0);
+        while (liftSense.getState() && opModeIsActive()) {
+            telemetry.addData("Limit Switch", "Is Not Pressed");
+            linear_drive.setPower(1);
+            left_drive.setPower(0);
+            right_drive.setPower(0);
+            detector.enable();
+
+
+
+
+
+
+        }
+        if (!liftSense.getState()){
+            linear_drive.setPower(0);
+
+
+        }
+        runtime.reset();
+        while ((runtime.seconds() < 0.5) && opModeIsActive()){
+            right_drive.setPower(-0.3);
+            left_drive.setPower(0.3);
+        }
+        runtime.reset();
+        while ((runtime.seconds() < 1.9) && opModeIsActive()) {
+            telemetry.addData("Path", "TurningRight", runtime.seconds());
+            telemetry.update();
+            right_drive.setPower(-0.3);
+            left_drive.setPower(-0.3);
+        }
+        detector.enable();
+        while ((runtime.seconds() < 1) && opModeIsActive()) {
+            telemetry.addData("Path","Waiting");
+        }
+        runtime.reset();
+        if (detector.getXPosition() > 320 && detector.isFound()) {
+            goldPosition = 2;
+            telemetry.addData("goldPosition", "2");
+
+        }
+        if (detector.getXPosition() < 319 && detector.isFound()) {
+            goldPosition = 1;
+            telemetry.addData("goldPosition", "1");
+
+        }
+        if (detector.isFound() == false) {
+            goldPosition = 3;
+            telemetry.addData("goldPosition", "3");
+
+
+        }
+        while (!detector.isFound() && opModeIsActive()){
+            left_drive.setPower(-0.3);
+        }
+        while  (detector.getXPosition() < 305 && detector.getXPosition() > 0 && opModeIsActive()) {
+            //left_drive.setPower(0.4);
+            right_drive.setPower(0.4);
+        }
+        while (detector.getXPosition() > 335 && detector.getXPosition() < 639 && opModeIsActive()) {
+            right_drive.setPower(-0.4);
+            left_drive.setPower(-0.4);
+
+        }
+
+        left_drive.setPower(0);
+        right_drive.setPower(0);
+        runtime.reset();
+
+        if(detector.getAligned()) {
+            while (runtime.seconds() < 2.8 && opModeIsActive()) {
+                left_drive.setPower(-0.5);
+                right_drive.setPower(0.5);
+            }
+        }
+        left_drive.setPower(0);
+        right_drive.setPower(0);
+        runtime.reset();
+        while (goldPosition == 1 && (runtime.seconds() < 0.7) && opModeIsActive()){
+            left_drive.setPower(0.4);
+
+        }
+        runtime.reset();
+        while (goldPosition == 3 && (runtime.seconds() < 0.7) && opModeIsActive()){
+            left_drive.setPower(-0.4);
+
+        }
+        runtime.reset();
+        while (runtime.seconds() < 0.6 && opModeIsActive()){
+            left_drive.setPower(1);
+            right_drive.setPower(-1);
+        }
+        runtime.reset();
+        
+
+
+
+
+
+
+    }
+}
