@@ -92,6 +92,7 @@ public class atlas_upper_program extends LinearOpMode {
         double rightSlow;
         double slowDrive;
         double slowTurn;
+        double intakeArm = 0;
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -111,20 +112,19 @@ public class atlas_upper_program extends LinearOpMode {
             slowDrive = drive / 2.0;
             slowTurn = turn / 2.0;
 
-            if (gamepad1.right_bumper) {
-                intake = 1.0;
-
-            } else if (gamepad1.left_bumper) {
-                intake = -1.0;
-
-            } else {
-                intake = 0;
-            }
 
             if (gamepad1.dpad_right)
                 clawOffset += CLAW_SPEED;
             else
                 clawOffset = 0;
+
+            if (gamepad1.right_trigger > 0.4) {
+                intakeArm = 0.5;
+            } else if (gamepad1.left_trigger > 0.4) {
+                intakeArm = -0.5;
+            } else {
+                intakeArm = 0;
+            }
 
 
             if (gamepad1.right_stick_y > 0.1)
@@ -162,7 +162,7 @@ public class atlas_upper_program extends LinearOpMode {
                 depositUp = Range.clip(depositUp, -0.75, 0.75);
                 depositDown = Range.clip(depositDown, -0.75, 0.75);
                 clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-                intakePower = Range.clip(intake, -0.65, 0.65);
+                intakePower = Range.clip(intakeArm, -0.5, 0.5);
                 leftPower = Range.clip(drive + turn, -1.0, 1.0);
                 rightPower = Range.clip(drive - turn, -1.0, 1.0);
                 linearPower = Range.clip(linearDrive, -1.0, 1.0);
@@ -193,6 +193,7 @@ public class atlas_upper_program extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f), deposit (%.2f), intake (%.2f), linear (%.2f)", leftPower, rightPower, depositPower, intakePower, depositServoPower);
+            telemetry.addData("check", "ayayayayayayayaya");
             telemetry.update();
 
         }
