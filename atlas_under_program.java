@@ -120,6 +120,7 @@ public class atlas_under_program
         //depositDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intakeDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         linearDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         // Define and initialize ALL installed servos.
