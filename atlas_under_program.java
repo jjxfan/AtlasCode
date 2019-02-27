@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -61,7 +60,7 @@ public class atlas_under_program
     public DcMotor rightDrive = null;
     public DcMotor intakeDrive = null;
     public DcMotor latchingDrive = null;
-    public Servo linearServo = null;
+    public Servo arm_servo = null;
     public DcMotor linearDrive = null;
     public DigitalChannel linearLimit = null;
 
@@ -92,6 +91,7 @@ public class atlas_under_program
         // Define and Initialize Motors
         leftDrive  = hwMap.get(DcMotor.class, "left_drive");
         rightDrive = hwMap.get(DcMotor.class, "right_drive");
+        arm_servo = hwMap.get(Servo.class,"arm_servo");
         //depositDrive    = hwMap.get(DcMotor.class, "deposit_drive");
         intakeDrive = hwMap.get(DcMotor.class, "intake_drive");
         linearDrive  = hwMap.get(DcMotor.class, "linear_drive");
@@ -113,6 +113,8 @@ public class atlas_under_program
         linearDrive.setPower(0);
 
 
+
+
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -124,8 +126,7 @@ public class atlas_under_program
 
 
         // Define and initialize ALL installed servos.
-        linearServo = hwMap.get(Servo.class, "linear_servo");
-        linearServo.setPosition(MID_SERVO);
+
 
 
     }

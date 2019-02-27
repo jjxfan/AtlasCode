@@ -89,6 +89,7 @@ public class atlas_upper_program_devin extends LinearOpMode {
         double depositServoPower = 0;
         boolean slowCheck = false;
         double leftSlow;
+        double arm_servo_pos = 0.5;
         double rightSlow;
         double slowDrive;
         double slowTurn;
@@ -111,6 +112,14 @@ public class atlas_upper_program_devin extends LinearOpMode {
             turn = -gamepad1.left_stick_x;
             slowDrive = drive / 2.0;
             slowTurn = turn / 2.0;
+            if (gamepad1.y){
+                arm_servo_pos = 1;
+            } else if (gamepad1.x) {
+                arm_servo_pos = 0;
+            } else if(gamepad1.b){
+                arm_servo_pos = 0.66;
+            }
+
 
 
             if (gamepad1.dpad_right)
@@ -185,9 +194,9 @@ public class atlas_upper_program_devin extends LinearOpMode {
                 robot.rightDrive.setPower(rightPower);
             }
             robot.intakeDrive.setPower(intakePower);
-            robot.linearServo.setPosition(depositServoPower);
             //robot.depositDrive.setPower(depositPower);
             robot.linearDrive.setPower(linearPower);
+            robot.arm_servo.setPosition(arm_servo_pos);
 
 
             // Show the elapsed game time and wheel power.

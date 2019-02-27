@@ -40,7 +40,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.opencv.core.Rect;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
 /**
@@ -159,6 +160,7 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCraterVufoira extends LinearOpM
             linear_drive.setPower(0);
         }
 
+
         telemetry.update();
         left_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -191,8 +193,8 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCraterVufoira extends LinearOpM
             telemetry.update();
         }
         left_drive.setPower(0);
-        left_drive.setTargetPosition(-5280 +left_drive.getCurrentPosition());
-        right_drive.setTargetPosition(5280+right_drive.getCurrentPosition());
+        left_drive.setTargetPosition(-0 +left_drive.getCurrentPosition());
+        right_drive.setTargetPosition(0+right_drive.getCurrentPosition());
         left_drive.setPower(1);
         right_drive.setPower(1);
         while(left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
@@ -200,6 +202,66 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCraterVufoira extends LinearOpM
             telemetry.addData("RMotorPos","%7d", right_drive.getCurrentPosition());
             telemetry.update();
         }
+        if(detector.isVuMarkVisible()) { //Checks if a VuMark is visible right now
+            telemetry.addData("Visible Target", detector.findVuMark().name()); //Retrieves the name of the current VuMark
+            VectorF translation = detector.getRobotTranslation(); //Obtains current robot location, as a vector in inches
+            if(translation != null) {
+                telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                        translation.get(0), translation.get(1), translation.get(2));
+            }
+            Orientation rotation = detector.getRobotOrientation(); //Obtains current robot orientation, as a set of angles in degrees
+            if(rotation != null) {
+                telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+            }
+        }
+        else {
+            //No visible VuMark
+            telemetry.addData("Visible Target", "none");
+        }
+        while (!detector.isVuMarkVisible()){
+            left_drive.setPower(0);
+            left_drive.setTargetPosition(-300 + left_drive.getCurrentPosition());
+            right_drive.setTargetPosition(300 + right_drive.getCurrentPosition());
+            left_drive.setPower(1);
+            right_drive.setPower(1);
+            while (left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
+                telemetry.addData("LMotorPos", "%7d", left_drive.getCurrentPosition());
+                telemetry.addData("RMotorPos", "%7d", right_drive.getCurrentPosition());
+                telemetry.update();
+            }
+
+        }
+
+
+
+
+
+            if (detector.isVuMarkVisible())     {
+
+                VectorF translation = detector.getRobotTranslation();
+                if (translation.get(1) > 100) {
+
+                    left_drive.setTargetPosition((int) -translation.get(1) * 10 + left_drive.getCurrentPosition());
+                    right_drive.setTargetPosition((int) (translation.get(1) * 10+ right_drive.getCurrentPosition()));
+                    left_drive.setPower(1);
+                    right_drive.setPower(1);
+                    while (left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
+                        telemetry.addData("LMotorPos", "%7d", left_drive.getCurrentPosition());
+                        telemetry.addData("RMotorPos", "%7d", right_drive.getCurrentPosition());
+                        telemetry.update();
+                    }
+
+
+                }
+                left_drive.setPower(0);
+                right_drive.setPower(0);
+            }
+
+
+
+
+
+        /*
         left_drive.setPower(0);
         right_drive.setPower(0);
         left_drive.setTargetPosition(970+left_drive.getCurrentPosition());
@@ -301,6 +363,7 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCraterVufoira extends LinearOpM
         }else{
             getAligned = false;
         }
+
         while (!getAligned  && opModeIsActive()) {
 
 
