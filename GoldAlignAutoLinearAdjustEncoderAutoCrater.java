@@ -160,8 +160,8 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
         telemetry.update();
         left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_drive.setTargetPosition(500 +left_drive.getCurrentPosition());
-        right_drive.setTargetPosition(-500+right_drive.getCurrentPosition());
+        left_drive.setTargetPosition(300 +left_drive.getCurrentPosition());
+        right_drive.setTargetPosition(-300+right_drive.getCurrentPosition());
         left_drive.setPower(1);
         right_drive.setPower(1);
         while(left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {

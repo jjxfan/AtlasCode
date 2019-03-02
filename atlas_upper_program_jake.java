@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -80,6 +81,7 @@ public class atlas_upper_program_jake extends LinearOpMode {
         double intakePower;
         double linearPower;
         double drive = 0;
+        double arm_servo_pos = 0.5;
         double turn = 0;
         double intake = 0;
         double depositUp = 0;
@@ -97,6 +99,7 @@ public class atlas_upper_program_jake extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        robot.intakeDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -107,9 +110,9 @@ public class atlas_upper_program_jake extends LinearOpMode {
 
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
-            drive = gamepad1.left_stick_y;
-            turn = -gamepad1.left_stick_x;
-            intakeArm = gamepad1.right_stick_y;
+            drive = gamepad1.left_stick_y * gamepad1.left_stick_y * gamepad1.left_stick_y;
+            turn = -gamepad1.left_stick_x * gamepad1.left_stick_x * gamepad1.left_stick_x;
+
             slowDrive = drive / 2.0;
             slowTurn = turn / 2.0;
 
@@ -138,7 +141,7 @@ public class atlas_upper_program_jake extends LinearOpMode {
             if (gamepad1.dpad_left) {
                 linearDrive = 0.0;
             }
-            if (gamepad1.b) {
+            if (gamepad1.a) {
                 slowCheck = true;
             } else {
                 slowCheck = false;
@@ -154,7 +157,7 @@ public class atlas_upper_program_jake extends LinearOpMode {
                 depositUp = Range.clip(depositUp, -0.75, 0.75);
                 depositDown = Range.clip(depositDown, -0.75, 0.75);
                 clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-                intakePower = Range.clip(intakeArm, -0.3, 0.3);
+                intakePower = Range.clip(intakeArm, -1, 1);
                 leftPower = Range.clip(drive + turn, -1.0, 1.0);
                 rightPower = Range.clip(drive - turn, -1.0, 1.0);
                 linearPower = Range.clip(linearDrive, -1.0, 1.0);
@@ -167,7 +170,13 @@ public class atlas_upper_program_jake extends LinearOpMode {
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
             // leftPower  = -gamepad1.left_stick_y ;
             // rightPower = -gamepad1.right_stick_y ;
-
+            if (gamepad1.y){
+                 robot.arm_servo.setPosition(0.95);
+            } else if (gamepad1.x) {
+                robot.arm_servo.setPosition(0);
+            } else if(gamepad1.b){
+                robot.arm_servo.setPosition(0.6);
+            }
             // Send calculated power to wheels
             if (slowCheck) {
                 robot.leftDrive.setPower(leftSlow);
@@ -176,8 +185,7 @@ public class atlas_upper_program_jake extends LinearOpMode {
                 robot.leftDrive.setPower(leftPower);
                 robot.rightDrive.setPower(rightPower);
             }
-            robot.intakeDrive.setPower(intakePower);
-            robot.linearServo.setPosition(depositServoPower);
+            robot.intakeDrive.setPower(gamepad1.right_stick_y);
             //robot.depositDrive.setPower(depositPower);
             robot.linearDrive.setPower(linearPower);
 

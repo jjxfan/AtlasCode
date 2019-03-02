@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -94,7 +95,7 @@ public class atlas_upper_program_devin extends LinearOpMode {
         double slowDrive;
         double slowTurn;
         double intakeArm = 0;
-
+        robot.intakeDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -128,9 +129,9 @@ public class atlas_upper_program_devin extends LinearOpMode {
                 clawOffset = 0;
 
             if (gamepad1.right_trigger > 0.4) {
-                intakeArm = 0.3;
+                intakePower = 0.6;
             } else if (gamepad1.left_trigger > 0.4) {
-                intakeArm = -0.3;
+                intakePower = -0.6;
             } else {
                 intakeArm = 0;
             }
@@ -193,7 +194,7 @@ public class atlas_upper_program_devin extends LinearOpMode {
                 robot.leftDrive.setPower(leftPower);
                 robot.rightDrive.setPower(rightPower);
             }
-            robot.intakeDrive.setPower(intakePower);
+            robot.intakeDrive.setPower(gamepad1.right_stick_y);
             //robot.depositDrive.setPower(depositPower);
             robot.linearDrive.setPower(linearPower);
             robot.arm_servo.setPosition(arm_servo_pos);
