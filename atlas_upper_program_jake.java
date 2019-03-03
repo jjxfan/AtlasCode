@@ -81,6 +81,7 @@ public class atlas_upper_program_jake extends LinearOpMode {
         double intakePower;
         double linearPower;
         double drive = 0;
+        double temp;
         double arm_servo_pos = 0.5;
         double turn = 0;
         double intake = 0;
@@ -110,9 +111,14 @@ public class atlas_upper_program_jake extends LinearOpMode {
 
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
-            drive = gamepad1.left_stick_y * gamepad1.left_stick_y * gamepad1.left_stick_y;
-            turn = -gamepad1.left_stick_x * gamepad1.left_stick_x * gamepad1.left_stick_x;
+            temp = gamepad1.left_stick_y;
+            if(Math.abs(temp) < 0.15){
+                drive = 0;
+            } else {
+                drive = Math.pow(gamepad1.left_stick_y, 3) + 0.15;
 
+            }
+            turn = Math.pow(-gamepad1.left_stick_x, 3) + 0.15;
             slowDrive = drive / 2.0;
             slowTurn = turn / 2.0;
 
