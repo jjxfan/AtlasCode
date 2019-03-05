@@ -66,6 +66,7 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private TouchSensor top = null;
     private Servo Marker;
+    private Servo arm_servo;
     private DcMotor linear_drive = null;
     private DigitalChannel liftSense = null;
     double goldPosition = 2;
@@ -97,6 +98,7 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
         Marker = hardwareMap.get(Servo.class, "Marker");
         linear_drive = hardwareMap.get(DcMotor.class, "linear_drive");
         intake_drive = hardwareMap.get(DcMotor.class, "intake_drive");
+        arm_servo = hardwareMap.get(Servo.class, "arm_servo");
         // Set up detector
         detector = new GoldAlignDetector(); // Create detector
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance()); // Initialize it with the app context and camera
@@ -104,7 +106,7 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
 
         // Optional tuning
         detector.alignSize = 30; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        detector.alignPosOffset = 10; // How far from center frame to offset this alignment zone.
+        detector.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
         detector.downscale = 0.4; // How much to downscale the input frames
 
         detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
@@ -160,8 +162,8 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
         telemetry.update();
         left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        left_drive.setTargetPosition(300 +left_drive.getCurrentPosition());
-        right_drive.setTargetPosition(-300+right_drive.getCurrentPosition());
+        left_drive.setTargetPosition(450 +left_drive.getCurrentPosition());
+        right_drive.setTargetPosition(-450+right_drive.getCurrentPosition());
         left_drive.setPower(1);
         right_drive.setPower(1);
         while(left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
@@ -180,8 +182,8 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
             telemetry.update();
         }
         left_drive.setPower(0);
-        left_drive.setTargetPosition(-5280 +left_drive.getCurrentPosition());
-        right_drive.setTargetPosition(5280+right_drive.getCurrentPosition());
+        left_drive.setTargetPosition(-5200 +left_drive.getCurrentPosition());
+        right_drive.setTargetPosition(5200+right_drive.getCurrentPosition());
         left_drive.setPower(1);
         right_drive.setPower(1);
         while(left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
@@ -244,8 +246,8 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
         right_drive.setPower(0);
         left_drive.setPower(0);
         right_drive.setPower(0);
-        left_drive.setTargetPosition(5100);
-        right_drive.setTargetPosition(-5100);
+        left_drive.setTargetPosition(4900);
+        right_drive.setTargetPosition(-4900);
         left_drive.setPower(-1);
         right_drive.setPower(-1);
         while(left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
@@ -255,19 +257,19 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
         }
         left_drive.setPower(0);
         right_drive.setPower(0);
-        left_drive.setTargetPosition(-970+left_drive.getCurrentPosition());
-        right_drive.setTargetPosition(-970+right_drive.getCurrentPosition());
+        left_drive.setTargetPosition(left_drive.getCurrentPosition());
+        right_drive.setTargetPosition(-1940+right_drive.getCurrentPosition());
         left_drive.setPower(1);
         right_drive.setPower(1);
-        while(left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
+        while(right_drive.isBusy() &&  runtime.seconds() < 10 && opModeIsActive()) {
             telemetry.addData("LMotorPos","%7d", left_drive.getCurrentPosition());
             telemetry.addData("RMotorPos","%7d", right_drive.getCurrentPosition());
             telemetry.update();
         }
         left_drive.setPower(0);
         right_drive.setPower(0);
-        left_drive.setTargetPosition(5080 +left_drive.getCurrentPosition());
-        right_drive.setTargetPosition(-5080+right_drive.getCurrentPosition());
+        left_drive.setTargetPosition(4100 +left_drive.getCurrentPosition());
+        right_drive.setTargetPosition(-4100+right_drive.getCurrentPosition());
         left_drive.setPower(-1);
         right_drive.setPower(-1);
         while(left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
@@ -280,24 +282,27 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
         left_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         right_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (!detector.isFound() && opModeIsActive()){
-            left_drive.setPower(-0.3);
+            left_drive.setPower(-0.2);
+            right_drive.setPower(-0.2);
         }
         left_drive.setPower(0);
-        while (!detector.getAligned() && opModeIsActive()) {
+        right_drive.setPower(0);
+        while (!detector.getAligned() && opModeIsActive() && detector.getYPosition() < 200) {
 
 
             right_drive.setPower(0);
             left_drive.setPower(0);
-            while (detector.getXPosition() > 345 && detector.getXPosition() < 639 && opModeIsActive()) {
-                left_drive.setPower(-0.3);
+            while (detector.getXPosition() > 335 && detector.getXPosition() < 639 && opModeIsActive()) {
+                left_drive.setPower(-0.2);
+                right_drive.setPower(-0.2);
 
 
             }
             right_drive.setPower(0);
             left_drive.setPower(0);
-            while (detector.getXPosition() < 315 && detector.getXPosition() > 0 && opModeIsActive()) {
-                left_drive.setPower(0.3);
-                right_drive.setPower(0);
+            while (detector.getXPosition() < 305 && detector.getXPosition() > 0 && opModeIsActive()) {
+                left_drive.setPower(0.2);
+                right_drive.setPower(0.2);
             }
         }
         while (!detector.getAligned() && opModeIsActive()) {
@@ -338,8 +343,8 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
 
 
 
-        left_drive.setTargetPosition(-3320 + left_drive.getCurrentPosition());
-        right_drive.setTargetPosition(3320 + right_drive.getCurrentPosition());
+        left_drive.setTargetPosition(-2320 + left_drive.getCurrentPosition());
+        right_drive.setTargetPosition(2320 + right_drive.getCurrentPosition());
         left_drive.setPower(0.5);
         right_drive.setPower(0.5);
         while ((left_drive.isBusy() || right_drive.isBusy()) && runtime.seconds() < 30 && opModeIsActive()) {
@@ -350,6 +355,13 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
 
         left_drive.setPower(0);
         right_drive.setPower(0);
+
+        runtime.reset();
+        arm_servo.setPosition(0.95);
+        while(opModeIsActive() && runtime.seconds() < 1.4){
+            intake_drive.setPower(-1);
+        }
+        intake_drive.setPower(0);
 
 
         /*runtime.reset();

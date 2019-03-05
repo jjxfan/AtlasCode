@@ -96,6 +96,7 @@ public class atlas_upper_program_jake extends LinearOpMode {
         double slowDrive;
         double slowTurn;
         double intakeArm = 0;
+        double tempX;
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -112,13 +113,15 @@ public class atlas_upper_program_jake extends LinearOpMode {
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
             temp = gamepad1.left_stick_y;
-            if(Math.abs(temp) < 0.15){
+            telemetry.addData("Xpos", gamepad1.left_stick_y);
+            telemetry.update();
+            if(gamepad1.left_stick_y < 0.15 && gamepad1.left_stick_y > -0.15 ){
                 drive = 0;
             } else {
                 drive = Math.pow(gamepad1.left_stick_y, 3) + 0.15;
-
             }
-            turn = Math.pow(-gamepad1.left_stick_x, 3) + 0.15;
+
+            turn = Math.pow(-gamepad1.left_stick_x, 3) ;
             slowDrive = drive / 2.0;
             slowTurn = turn / 2.0;
 
@@ -176,11 +179,11 @@ public class atlas_upper_program_jake extends LinearOpMode {
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
             // leftPower  = -gamepad1.left_stick_y ;
             // rightPower = -gamepad1.right_stick_y ;
-            if (gamepad1.y){
+            if (gamepad1.x){
                  robot.arm_servo.setPosition(0.95);
-            } else if (gamepad1.x) {
+            } else if (gamepad1.b) {
                 robot.arm_servo.setPosition(0);
-            } else if(gamepad1.b){
+            } else if(gamepad1.y){
                 robot.arm_servo.setPosition(0.6);
             }
             // Send calculated power to wheels
@@ -191,7 +194,7 @@ public class atlas_upper_program_jake extends LinearOpMode {
                 robot.leftDrive.setPower(leftPower);
                 robot.rightDrive.setPower(rightPower);
             }
-            robot.intakeDrive.setPower(gamepad1.right_stick_y);
+            robot.intakeDrive.setPower(-gamepad1.right_stick_y/2);
             //robot.depositDrive.setPower(depositPower);
             robot.linearDrive.setPower(linearPower);
 

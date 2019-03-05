@@ -68,6 +68,7 @@ public class GoldAlignAutoLinearAdjustEncoderAuto extends LinearOpMode {
     private Servo Marker;
     private DcMotor linear_drive = null;
     private DigitalChannel liftSense = null;
+    private Servo arm_servo;
     double goldPosition = 2;
     boolean GoldIsFound = false;
     double Pi =  3.141596;
@@ -97,6 +98,7 @@ public class GoldAlignAutoLinearAdjustEncoderAuto extends LinearOpMode {
         Marker = hardwareMap.get(Servo.class, "Marker");
         linear_drive = hardwareMap.get(DcMotor.class, "linear_drive");
         intake_drive = hardwareMap.get(DcMotor.class, "intake_drive");
+        arm_servo = hardwareMap.get(Servo.class, "arm_servo");
         // Set up detector
         detector = new GoldAlignDetector(); // Create detector
         detector.init(hardwareMap.appContext, CameraViewDisplay.getInstance()); // Initialize it with the app context and camera
@@ -449,9 +451,10 @@ public class GoldAlignAutoLinearAdjustEncoderAuto extends LinearOpMode {
                 telemetry.addData("RMotorPos", "%7d", right_drive.getCurrentPosition());
                 telemetry.update();
             }
+            arm_servo.setPosition(0.95);
             runtime.reset();
-            while(opModeIsActive() && runtime.seconds() < 0.75){
-                intake_drive.setPower(-0.25);
+            while(opModeIsActive() && runtime.seconds() < 1.4){
+                intake_drive.setPower(-1);
             }
             intake_drive.setPower(0);
 
@@ -477,16 +480,26 @@ public class GoldAlignAutoLinearAdjustEncoderAuto extends LinearOpMode {
             }
             left_drive.setPower(-1);
             right_drive.setPower(1);
-            left_drive.setTargetPosition(-1000 + left_drive.getCurrentPosition());
-            right_drive.setTargetPosition(1000 + right_drive.getCurrentPosition());
+            left_drive.setTargetPosition(-700 + left_drive.getCurrentPosition());
+            right_drive.setTargetPosition(700 + right_drive.getCurrentPosition());
             while (left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
                 telemetry.addData("LMotorPos", "%7d", left_drive.getCurrentPosition());
                 telemetry.addData("RMotorPos", "%7d", right_drive.getCurrentPosition());
                 telemetry.update();
             }
+            left_drive.setPower(-1);
+            right_drive.setPower(1);
+            left_drive.setTargetPosition(-160 + left_drive.getCurrentPosition());
+            right_drive.setTargetPosition(-160 + right_drive.getCurrentPosition());
+            while (left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
+                telemetry.addData("LMotorPos", "%7d", left_drive.getCurrentPosition());
+                telemetry.addData("RMotorPos", "%7d", right_drive.getCurrentPosition());
+                telemetry.update();
+            }
+            arm_servo.setPosition(0.95);
             runtime.reset();
-            while(opModeIsActive() && runtime.seconds() < 0.75){
-                intake_drive.setPower(-0.25);
+            while(opModeIsActive() && runtime.seconds() < 1.4){
+                intake_drive.setPower(-1);
             }
             intake_drive.setPower(0);
 
@@ -513,9 +526,19 @@ public class GoldAlignAutoLinearAdjustEncoderAuto extends LinearOpMode {
                 telemetry.addData("RMotorPos", "%7d", right_drive.getCurrentPosition());
                 telemetry.update();
             }
+            left_drive.setPower(-1);
+            right_drive.setPower(1);
+            left_drive.setTargetPosition(-160 + left_drive.getCurrentPosition());
+            right_drive.setTargetPosition(-160 + right_drive.getCurrentPosition());
+            while (left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
+                telemetry.addData("LMotorPos", "%7d", left_drive.getCurrentPosition());
+                telemetry.addData("RMotorPos", "%7d", right_drive.getCurrentPosition());
+                telemetry.update();
+            }
             runtime.reset();
-            while(opModeIsActive() && runtime.seconds() < 0.75){
-                intake_drive.setPower(-0.25);
+            arm_servo.setPosition(0.95);
+            while(opModeIsActive() && runtime.seconds() < 1.4){
+                intake_drive.setPower(-1);
             }
             intake_drive.setPower(0);
         }

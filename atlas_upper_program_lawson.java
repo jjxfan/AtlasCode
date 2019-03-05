@@ -50,9 +50,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="DevinDrive", group="Linear Opmode")
+@TeleOp(name="LawsonDrive", group="Linear Opmode")
 //@Disabled
-public class atlas_upper_program_devin extends LinearOpMode {
+public class atlas_upper_program_lawson extends LinearOpMode {
 
     // Declare OpMode members.
     private DigitalChannel liftSense;
@@ -81,6 +81,8 @@ public class atlas_upper_program_devin extends LinearOpMode {
         double intakePower;
         double linearPower;
         double drive = 0;
+        double temp;
+        double arm_servo_pos = 0.5;
         double turn = 0;
         double intake = 0;
         double depositUp = 0;
@@ -90,15 +92,16 @@ public class atlas_upper_program_devin extends LinearOpMode {
         double depositServoPower = 0;
         boolean slowCheck = false;
         double leftSlow;
-        double arm_servo_pos = 0.5;
         double rightSlow;
         double slowDrive;
         double slowTurn;
         double intakeArm = 0;
-        robot.intakeDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        double tempX;
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
+        robot.intakeDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -109,44 +112,24 @@ public class atlas_upper_program_devin extends LinearOpMode {
 
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
-            drive = gamepad1.left_stick_y;
-            turn = -gamepad1.left_stick_x * 0.9;
-            slowDrive = drive / 2.0;
-            slowTurn = turn / 2.0;
-            if (gamepad1.b){
-                if(arm_servo_pos < 0.95) {
-                    arm_servo_pos = robot.arm_servo.getPosition() + 0.005;
-                }
-            } else if (gamepad1.y) {
-                if(arm_servo_pos > 0) {
-                    arm_servo_pos = robot.arm_servo.getPosition() -0.005;
-                }
-
-            } else if(gamepad1.x){
-                if(arm_servo_pos > 0.66) {
-                    arm_servo_pos = robot.arm_servo.getPosition() -0.005;
-                } else {
-                    arm_servo_pos = robot.arm_servo.getPosition() +0.01;
-                }
-
-
+            temp = gamepad1.left_stick_y;
+            telemetry.addData("Xpos", gamepad1.left_stick_y);
+            telemetry.update();
+            if(gamepad1.left_stick_y < 0.15 && gamepad1.left_stick_y > -0.15 ){
+                drive = 0;
+            } else {
+                drive = Math.pow(gamepad1.left_stick_y, 3) + 0.15;
             }
 
+            turn = Math.pow(-gamepad1.left_stick_x, 3) ;
+            slowDrive = drive / 2.0;
+            slowTurn = turn / 2.0;
 
 
             if (gamepad1.dpad_right)
                 clawOffset += CLAW_SPEED;
             else
                 clawOffset = 0;
-
-            if (gamepad1.right_trigger > 0.4) {
-                intakePower = 0.6;
-            } else if (gamepad1.left_trigger > 0.4) {
-                intakePower = -0.6;
-            } else {
-                intakeArm = 0;
-            }
-
 
             if (gamepad1.right_stick_y > 0.1)
                 depositUp += robot.DEPOSIT_UP_POWER;
@@ -183,7 +166,7 @@ public class atlas_upper_program_devin extends LinearOpMode {
                 depositUp = Range.clip(depositUp, -0.75, 0.75);
                 depositDown = Range.clip(depositDown, -0.75, 0.75);
                 clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-                intakePower = Range.clip(intakeArm, -0.5, 0.5);
+                intakePower = Range.clip(intakeArm, -1, 1);
                 leftPower = Range.clip(drive + turn, -1.0, 1.0);
                 rightPower = Range.clip(drive - turn, -1.0, 1.0);
                 linearPower = Range.clip(linearDrive, -1.0, 1.0);
@@ -196,7 +179,13 @@ public class atlas_upper_program_devin extends LinearOpMode {
             // - This requires no math, but it is hard to drive forward slowly and keep straight.
             // leftPower  = -gamepad1.left_stick_y ;
             // rightPower = -gamepad1.right_stick_y ;
-
+            if (gamepad1.y){
+                 robot.arm_servo.setPosition(0.95);
+            } else if (gamepad1.a) {
+                robot.arm_servo.setPosition(0);
+            } else if(gamepad1.x && !gamepad1.dpad_down && !gamepad1.dpad_up){
+                robot.arm_servo.setPosition(0.6);
+            }
             // Send calculated power to wheels
             if (slowCheck) {
                 robot.leftDrive.setPower(leftSlow);
@@ -205,10 +194,9 @@ public class atlas_upper_program_devin extends LinearOpMode {
                 robot.leftDrive.setPower(leftPower);
                 robot.rightDrive.setPower(rightPower);
             }
-            robot.intakeDrive.setPower(-gamepad1.right_stick_y / 1.5);
+            robot.intakeDrive.setPower(gamepad1.right_stick_y / 2);
             //robot.depositDrive.setPower(depositPower);
             robot.linearDrive.setPower(linearPower);
-            robot.arm_servo.setPosition(arm_servo_pos);
 
 
             // Show the elapsed game time and wheel power.
