@@ -134,10 +134,7 @@ public class atlas_upper_program_devin extends LinearOpMode {
 
 
 
-            if (gamepad1.dpad_right)
-                clawOffset += CLAW_SPEED;
-            else
-                clawOffset = 0;
+
 
             if (gamepad1.right_trigger > 0.4) {
                 intakePower = 0.6;
@@ -148,16 +145,10 @@ public class atlas_upper_program_devin extends LinearOpMode {
             }
 
 
-            if (gamepad1.right_stick_y > 0.1)
-                depositUp += robot.DEPOSIT_UP_POWER;
-
-            if (gamepad1.right_stick_y < -0.1)
-                depositDown += robot.DEPOSIT_DOWN_POWER;
-
             if (gamepad1.dpad_up && gamepad1.a && liftSense.getState() == true) {
-                linearDrive = 1.0;
+                robot.linearDrive.setPower(1);
             } else {
-                linearDrive = 0;
+                robot.linearDrive.setPower(0);
             }
 
             if (gamepad1.dpad_down && gamepad1.a) {
