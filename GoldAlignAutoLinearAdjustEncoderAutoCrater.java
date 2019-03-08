@@ -174,7 +174,7 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
         left_drive.setPower(0);
         right_drive.setPower(0);
         left_drive.setTargetPosition(-950+left_drive.getCurrentPosition());
-        left_drive.setPower(1);
+        left_drive.setPower(0.8);
         runtime.reset();
         while(left_drive.isBusy()  && runtime.seconds() < 10 && opModeIsActive()) {
             telemetry.addData("LMotorPos","%7d", left_drive.getCurrentPosition());
@@ -193,10 +193,10 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
         }
         left_drive.setPower(0);
         right_drive.setPower(0);
-        left_drive.setTargetPosition(970+left_drive.getCurrentPosition());
-        right_drive.setTargetPosition(970+right_drive.getCurrentPosition());
-        left_drive.setPower(1);
-        right_drive.setPower(1);
+        left_drive.setTargetPosition(940+left_drive.getCurrentPosition());
+        right_drive.setTargetPosition(940+right_drive.getCurrentPosition());
+        left_drive.setPower(0.6);
+        right_drive.setPower(0.6);
         while(left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {
             telemetry.addData("LMotorPos","%7d", left_drive.getCurrentPosition());
             telemetry.addData("RMotorPos","%7d", right_drive.getCurrentPosition());
@@ -268,8 +268,8 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
         }
         left_drive.setPower(0);
         right_drive.setPower(0);
-        left_drive.setTargetPosition(4100 +left_drive.getCurrentPosition());
-        right_drive.setTargetPosition(-4100+right_drive.getCurrentPosition());
+        left_drive.setTargetPosition(3900 +left_drive.getCurrentPosition());
+        right_drive.setTargetPosition(-3900+right_drive.getCurrentPosition());
         left_drive.setPower(-1);
         right_drive.setPower(-1);
         while(left_drive.isBusy() && right_drive.isBusy() && runtime.seconds() < 10 && opModeIsActive()) {

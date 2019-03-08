@@ -138,18 +138,15 @@ public class atlas_upper_program_jake extends LinearOpMode {
                 depositDown += robot.DEPOSIT_DOWN_POWER;
 
             if (gamepad1.dpad_up && gamepad1.a && liftSense.getState() == true) {
-                linearDrive = 1.0;
+                robot.linearDrive.setPower(1);
+
+            } else if (gamepad1.dpad_down && gamepad1.a) {
+                robot.linearDrive.setPower(-1);
             } else {
-                linearDrive = 0;
+                robot.linearDrive.setPower(0);
             }
 
-            if (gamepad1.dpad_down && gamepad1.a) {
-                linearDrive = -1.0;
-            }
 
-            if (gamepad1.dpad_left) {
-                linearDrive = 0.0;
-            }
             if (gamepad1.a) {
                 slowCheck = true;
             } else {
@@ -169,8 +166,7 @@ public class atlas_upper_program_jake extends LinearOpMode {
                 intakePower = Range.clip(intakeArm, -1, 1);
                 leftPower = Range.clip(drive + turn, -1.0, 1.0);
                 rightPower = Range.clip(drive - turn, -1.0, 1.0);
-                linearPower = Range.clip(linearDrive, -1.0, 1.0);
-                leftSlow    = Range.clip(slowDrive + slowTurn, -0.5, 0.5);
+                leftSlow= Range.clip(slowDrive + slowTurn, -0.5, 0.5);
                 rightSlow    = Range.clip(slowDrive - slowTurn, -0.5, 0.5);
 
                 depositPower = depositUp - depositDown;
@@ -196,7 +192,6 @@ public class atlas_upper_program_jake extends LinearOpMode {
             }
             robot.intakeDrive.setPower(-gamepad1.right_stick_y/2);
             //robot.depositDrive.setPower(depositPower);
-            robot.linearDrive.setPower(linearPower);
 
 
             // Show the elapsed game time and wheel power.

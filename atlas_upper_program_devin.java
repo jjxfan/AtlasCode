@@ -147,17 +147,14 @@ public class atlas_upper_program_devin extends LinearOpMode {
 
             if (gamepad1.dpad_up && gamepad1.a && liftSense.getState() == true) {
                 robot.linearDrive.setPower(1);
+
+            } else if (gamepad1.dpad_down && gamepad1.a) {
+                robot.linearDrive.setPower(-1);
             } else {
                 robot.linearDrive.setPower(0);
             }
 
-            if (gamepad1.dpad_down && gamepad1.a) {
-                linearDrive = -1.0;
-            }
 
-            if (gamepad1.dpad_left) {
-                linearDrive = 0.0;
-            }
             if (gamepad1.b) {
                 slowCheck = true;
             } else {
@@ -177,7 +174,6 @@ public class atlas_upper_program_devin extends LinearOpMode {
                 intakePower = Range.clip(intakeArm, -0.5, 0.5);
                 leftPower = Range.clip(drive + turn, -1.0, 1.0);
                 rightPower = Range.clip(drive - turn, -1.0, 1.0);
-                linearPower = Range.clip(linearDrive, -1.0, 1.0);
                 leftSlow    = Range.clip(slowDrive + slowTurn, -0.5, 0.5);
                 rightSlow    = Range.clip(slowDrive - slowTurn, -0.5, 0.5);
 
@@ -198,7 +194,6 @@ public class atlas_upper_program_devin extends LinearOpMode {
             }
             robot.intakeDrive.setPower(-gamepad1.right_stick_y / 1.5);
             //robot.depositDrive.setPower(depositPower);
-            robot.linearDrive.setPower(linearPower);
             robot.arm_servo.setPosition(arm_servo_pos);
 
 
