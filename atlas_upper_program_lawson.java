@@ -74,28 +74,28 @@ public class atlas_upper_program_lawson extends LinearOpMode {
        robot.rightDrive.setDirection(DcMotor.Direction.REVERSE);
        robot.depositDrive.setDirection(DcMotor.Direction.FORWARD);*/
         robot.init(hardwareMap);
-        double clawOffset = 0;                       // Servo mid position
+        double clawOffset = 0.0;                       // Servo mid position
         final double CLAW_SPEED = 0.02;
         double leftPower;
         double rightPower;
         double intakePower;
         double linearPower;
-        double drive = 0;
+        double drive = 0.0;
         double temp;
         double arm_servo_pos = 0.5;
-        double turn = 0;
-        double intake = 0;
-        double depositUp = 0;
-        double depositDown = 0;
-        double linearDrive = 0;
-        double depositPower = 0;
-        double depositServoPower = 0;
+        double turn = 0.0;
+        double intake = 0.0;
+        double depositUp = 0.0;
+        double depositDown = 0.0;
+        double linearDrive = 0.0;
+        double depositPower = 0.0;
+        double depositServoPower = 0.0;
         boolean slowCheck = false;
         double leftSlow;
         double rightSlow;
         double slowDrive;
         double slowTurn;
-        double intakeArm = 0;
+        double intakeArm = 0.0;
         double tempX;
 
         // Wait for the game to start (driver presses PLAY)
@@ -116,7 +116,7 @@ public class atlas_upper_program_lawson extends LinearOpMode {
             telemetry.addData("Xpos", gamepad1.left_stick_y);
             telemetry.update();
             if(gamepad1.left_stick_y < 0.15 && gamepad1.left_stick_y > -0.15 ){
-                drive = 0;
+                drive = 0.0;
             } else {
                 drive = Math.pow(gamepad1.left_stick_y, 3) + 0.15;
             }
@@ -130,12 +130,12 @@ public class atlas_upper_program_lawson extends LinearOpMode {
 
 
             if (gamepad1.dpad_up && gamepad1.a && liftSense.getState() == true) {
-                robot.linearDrive.setPower(1);
+                robot.linearDrive.setPower(1.0);
 
             } else if (gamepad1.dpad_down && gamepad1.a) {
-                robot.linearDrive.setPower(-1);
+                robot.linearDrive.setPower(-1.0);
             } else {
-                robot.linearDrive.setPower(0);
+                robot.linearDrive.setPower(0.0);
             }
 
             if (gamepad1.b) {
@@ -154,7 +154,7 @@ public class atlas_upper_program_lawson extends LinearOpMode {
                 depositUp = Range.clip(depositUp, -0.75, 0.75);
                 depositDown = Range.clip(depositDown, -0.75, 0.75);
                 clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-                intakePower = Range.clip(intakeArm, -1, 1);
+                intakePower = Range.clip(intakeArm, -1.0, 1.0);
                 leftPower = Range.clip(drive + turn, -1.0, 1.0);
                 rightPower = Range.clip(drive - turn, -1.0, 1.0);
                 linearPower = Range.clip(linearDrive, -1.0, 1.0);
@@ -170,7 +170,7 @@ public class atlas_upper_program_lawson extends LinearOpMode {
             if (gamepad1.y){
                  robot.arm_servo.setPosition(0.95);
             } else if (gamepad1.a) {
-                robot.arm_servo.setPosition(0);
+                robot.arm_servo.setPosition(0.0);
             } else if(gamepad1.x && !gamepad1.dpad_down && !gamepad1.dpad_up){
                 robot.arm_servo.setPosition(0.6);
             }
@@ -182,7 +182,7 @@ public class atlas_upper_program_lawson extends LinearOpMode {
                 robot.leftDrive.setPower(leftPower);
                 robot.rightDrive.setPower(rightPower);
             }
-            robot.intakeDrive.setPower(gamepad1.right_stick_y / 2);
+            robot.intakeDrive.setPower(gamepad1.right_stick_y / 2.0);
             //robot.depositDrive.setPower(depositPower);
 
 

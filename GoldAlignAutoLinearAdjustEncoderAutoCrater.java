@@ -293,16 +293,16 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
             right_drive.setPower(0);
             left_drive.setPower(0);
             while (detector.getXPosition() > 335 && detector.getXPosition() < 639 && opModeIsActive()) {
-                left_drive.setPower(-0.3);
-                right_drive.setPower(-0.3);
+                left_drive.setPower(-0.25);
+                right_drive.setPower(-0.25);
 
 
             }
             right_drive.setPower(0);
             left_drive.setPower(0);
             while (detector.getXPosition() < 305 && detector.getXPosition() > 0 && opModeIsActive()) {
-                left_drive.setPower(0.3);
-                right_drive.setPower(0.3);
+                left_drive.setPower(0.25);
+                right_drive.setPower(0.25);
             }
         }
         while (!detector.getAligned() && opModeIsActive()) {
@@ -357,7 +357,7 @@ public class GoldAlignAutoLinearAdjustEncoderAutoCrater extends LinearOpMode {
         right_drive.setPower(0);
 
         runtime.reset();
-        arm_servo.setPosition(0.95);
+        arm_servo.setPosition(0.6);
         while(opModeIsActive() && runtime.seconds() < 1.4){
             intake_drive.setPower(-1);
         }
