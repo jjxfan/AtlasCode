@@ -144,13 +144,7 @@ public class Drive_Lawson extends OpMode
         } else if (slowTurn < -0.3){
             slowTurn = -0.3;
         }
-        if (gamepad1.y){
-            arm_servo.setPosition(0.95);
-        } else if (gamepad1.a) {
-            arm_servo.setPosition(0.0);
-        } else if(gamepad1.x && !gamepad1.dpad_down && !gamepad1.dpad_up){
-            arm_servo.setPosition(0.6);
-        }
+        
 
         leftPower = Range.clip(drive + turn, -1.0, 1.0);
         rightPower = Range.clip(drive - turn, -1.0, 1.0);
@@ -166,7 +160,7 @@ public class Drive_Lawson extends OpMode
             left_drive.setPower(leftPower);
             right_drive.setPower(rightPower);
         }
-        intake_drive.setPower(gamepad1.right_stick_y / 2.0);
+        
 
 
     }
